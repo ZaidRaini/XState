@@ -5,6 +5,7 @@ import axios from "axios";
 export default function LocationSelector() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState(""); // Add selectedCity state
 
   const fetchCountries = async () => {
     try {
@@ -62,75 +63,84 @@ export default function LocationSelector() {
   });
 
   return (
-    <div className="flex  gap-4  justify-evenly  w-full mt-10  ">
-      {/* Country Dropdown */}
-      <select
-        className="p-2 border rounded w-80"
-        value={selectedCountry}
-        onChange={(e) => {
-          setSelectedCountry(e.target.value);
-          setSelectedState(""); // Reset state when country changes
-        }}
-      >
-        <option value="" disabled selected>
-          Select Country
-        </option>
-        {loadingCountries ? (
-          <option>Loading...</option>
-        ) : countries.length === 0 ? (
-          <option>No countries available</option> // Show message on API failure
-        ) : (
-          countries.map((country: string) => (
-            <option key={country} value={country}>
-              {country}
-            </option>
-          ))
-        )}
-      </select>
+    <>
+      <div className="flex  gap-10  justify-center   w-full mt-10  ">
+        {/* Country Dropdown */}
+        <select
+          className="p-2 border rounded w-80"
+          value={selectedCountry}
+          onChange={(e) => {
+            setSelectedCountry(e.target.value);
+            setSelectedState(""); // Reset state when country changes
+          }}
+        >
+          <option value="" disabled selected>
+            Select Country
+          </option>
+          {loadingCountries ? (
+            <option>Loading...</option>
+          ) : countries.length === 0 ? (
+            <option>No countries available</option> // Show message on API failure
+          ) : (
+            countries.map((country: string) => (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            ))
+          )}
+        </select>
 
-      {/* State Dropdown */}
-      <select
-        className="p-2 border rounded"
-        value={selectedState}
-        onChange={(e) => setSelectedState(e.target.value)}
-        disabled={!selectedCountry || loadingStates}
-      >
-        <option value="" disabled selected>
-          Select State
-        </option>
-        {loadingStates ? (
-          <option>Loading...</option>
-        ) : states.length === 0 ? (
-          <option>No states available</option> // Handle API error
-        ) : (
-          states.map((state: string) => (
-            <option key={state} value={state}>
-              {state}
-            </option>
-          ))
-        )}
-      </select>
+        {/* State Dropdown */}
+        <select
+          className="p-2 border rounded"
+          value={selectedState}
+          onChange={(e) => setSelectedState(e.target.value)}
+          disabled={!selectedCountry || loadingStates}
+        >
+          <option value="" disabled selected>
+            Select State
+          </option>
+          {loadingStates ? (
+            <option>Loading...</option>
+          ) : states.length === 0 ? (
+            <option>No states available</option> // Handle API error
+          ) : (
+            states.map((state: string) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))
+          )}
+        </select>
 
-      {/* City Dropdown */}
-      <select
-        className="p-2 border rounded"
-        disabled={!selectedState || loadingCities}
-      >
-        <option value="" disabled selected>
-          Select City
-        </option>
-        {loadingCities ? (
-          <option>Loading...</option>
-        ) : cities.length === 0 ? (
-          <option>No cities available</option> // Handle API error
-        ) : (
-          cities.map((city: string) => (
-            <option key={city} value={city}>
-              {city}
-            </option>
-          ))
-        )}
-      </select>
-    </div>
+        {/* City Dropdown */}
+        <select
+          className="p-2 border rounded"
+          disabled={!selectedState || loadingCities}
+          value={selectedCity}
+          onChange={(e) => setSelectedCity(e.target.value)}
+        >
+          <option value="" disabled selected>
+            Select City
+          </option>
+          {loadingCities ? (
+            <option>Loading...</option>
+          ) : cities.length === 0 ? (
+            <option>No cities available</option> // Handle API error
+          ) : (
+            cities.map((city: string) => (
+              <option key={city} value={city}>
+                {city}
+              </option>
+            ))
+          )}
+        </select>
+      </div>
+      {selectedCity && selectedState && selectedCountry && (
+        <p className="mt-5 text-center font-semibold">
+          You selected {selectedCity}, {selectedState}, {selectedCountry}
+        </p>
+      )}
+    </>
   );
 }
