@@ -15,7 +15,7 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch countries:", error);
-      return []; // Return an empty array on error
+      throw error; // Return an empty array on error
     }
   };
 
@@ -28,7 +28,7 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch states:", error);
-      return [];
+      throw error;
     }
   };
 
@@ -41,22 +41,34 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch cities:", error);
-      return [];
+      throw error;
     }
   };
 
-  const { data: countries = [], isLoading: loadingCountries } = useQuery({
+  const {
+    data: countries = [],
+    isLoading: loadingCountries,
+    error: countriesError,
+  } = useQuery({
     queryKey: ["countries"],
     queryFn: fetchCountries,
   });
 
-  const { data: states = [], isLoading: loadingStates } = useQuery({
+  const {
+    data: states = [],
+    isLoading: loadingStates,
+    error: statesError,
+  } = useQuery({
     queryKey: ["states", selectedCountry],
     queryFn: fetchStates,
     enabled: !!selectedCountry, // Only fetch when a country is selected
   });
 
-  const { data: cities = [], isLoading: loadingCities } = useQuery({
+  const {
+    data: cities = [],
+    isLoading: loadingCities,
+    error: citiesError,
+  } = useQuery({
     queryKey: ["cities", selectedCountry, selectedState],
     queryFn: fetchCities,
     enabled: !!selectedCountry && !!selectedState, // Fetch when country & state are selected
@@ -79,9 +91,8 @@ export default function LocationSelector() {
           </option>
           {loadingCountries ? (
             <option>Loading...</option>
-          ) : countries.length === 0 ? (
-            <option>No countries available</option> // Show message on API failure
           ) : (
+            !countriesError &&
             countries.map((country: string) => (
               <option key={country} value={country}>
                 {country}
@@ -102,9 +113,8 @@ export default function LocationSelector() {
           </option>
           {loadingStates ? (
             <option>Loading...</option>
-          ) : states.length === 0 ? (
-            <option>No states available</option> // Handle API error
           ) : (
+            !statesError &&
             states.map((state: string) => (
               <option key={state} value={state}>
                 {state}
@@ -125,9 +135,8 @@ export default function LocationSelector() {
           </option>
           {loadingCities ? (
             <option>Loading...</option>
-          ) : cities.length === 0 ? (
-            <option>No cities available</option> // Handle API error
           ) : (
+            !citiesError &&
             cities.map((city: string) => (
               <option key={city} value={city}>
                 {city}
