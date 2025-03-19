@@ -5,7 +5,7 @@ import axios from "axios";
 export default function LocationSelector() {
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState(""); // Add selectedCity state
+  const [selectedCity, setSelectedCity] = useState("");
 
   const fetchCountries = async () => {
     try {
@@ -15,7 +15,7 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch countries:", error);
-      throw error; // Return an empty array on error
+      throw error; // Re-throw the error to trigger the `error` state in useQuery
     }
   };
 
@@ -28,7 +28,7 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch states:", error);
-      throw error;
+      throw error; // Re-throw the error to trigger the `error` state in useQuery
     }
   };
 
@@ -41,7 +41,7 @@ export default function LocationSelector() {
       return res.data;
     } catch (error) {
       console.error("Failed to fetch cities:", error);
-      throw error;
+      throw error; // Re-throw the error to trigger the `error` state in useQuery
     }
   };
 
@@ -76,7 +76,7 @@ export default function LocationSelector() {
 
   return (
     <>
-      <div className="flex  gap-10  justify-center   w-full mt-10  ">
+      <div className="flex gap-10 justify-center w-full mt-10">
         {/* Country Dropdown */}
         <select
           className="p-2 border rounded w-80"
@@ -89,16 +89,13 @@ export default function LocationSelector() {
           <option value="" disabled selected>
             Select Country
           </option>
-          {loadingCountries ? (
-            <option>Loading...</option>
-          ) : (
+          {!loadingCountries &&
             !countriesError &&
             countries.map((country: string) => (
               <option key={country} value={country}>
                 {country}
               </option>
-            ))
-          )}
+            ))}
         </select>
 
         {/* State Dropdown */}
@@ -111,16 +108,13 @@ export default function LocationSelector() {
           <option value="" disabled selected>
             Select State
           </option>
-          {loadingStates ? (
-            <option>Loading...</option>
-          ) : (
+          {!loadingStates &&
             !statesError &&
             states.map((state: string) => (
               <option key={state} value={state}>
                 {state}
               </option>
-            ))
-          )}
+            ))}
         </select>
 
         {/* City Dropdown */}
@@ -133,16 +127,13 @@ export default function LocationSelector() {
           <option value="" disabled selected>
             Select City
           </option>
-          {loadingCities ? (
-            <option>Loading...</option>
-          ) : (
+          {!loadingCities &&
             !citiesError &&
             cities.map((city: string) => (
               <option key={city} value={city}>
                 {city}
               </option>
-            ))
-          )}
+            ))}
         </select>
       </div>
       {selectedCity && selectedState && selectedCountry && (
