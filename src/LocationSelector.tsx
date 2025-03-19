@@ -7,26 +7,41 @@ export default function LocationSelector() {
   const [selectedState, setSelectedState] = useState("");
 
   const fetchCountries = async () => {
-    const res = await axios.get(
-      "https://crio-location-selector.onrender.com/countries"
-    );
-    return res.data;
+    try {
+      const res = await axios.get(
+        "https://crio-location-selector.onrender.com/countries"
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Failed to fetch countries:", error);
+      return []; // Return an empty array on error
+    }
   };
 
   const fetchStates = async () => {
     if (!selectedCountry) return [];
-    const res = await axios.get(
-      `https://crio-location-selector.onrender.com/country=${selectedCountry}/states`
-    );
-    return res.data;
+    try {
+      const res = await axios.get(
+        `https://crio-location-selector.onrender.com/country=${selectedCountry}/states`
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Failed to fetch states:", error);
+      return [];
+    }
   };
 
   const fetchCities = async () => {
     if (!selectedCountry || !selectedState) return [];
-    const res = await axios.get(
-      `https://crio-location-selector.onrender.com/country=${selectedCountry}/state=${selectedState}/cities`
-    );
-    return res.data;
+    try {
+      const res = await axios.get(
+        `https://crio-location-selector.onrender.com/country=${selectedCountry}/state=${selectedState}/cities`
+      );
+      return res.data;
+    } catch (error) {
+      console.error("Failed to fetch cities:", error);
+      return [];
+    }
   };
 
   const { data: countries = [], isLoading: loadingCountries } = useQuery({
@@ -62,6 +77,8 @@ export default function LocationSelector() {
         </option>
         {loadingCountries ? (
           <option>Loading...</option>
+        ) : countries.length === 0 ? (
+          <option>No countries available</option> // Show message on API failure
         ) : (
           countries.map((country: string) => (
             <option key={country} value={country}>
@@ -83,6 +100,8 @@ export default function LocationSelector() {
         </option>
         {loadingStates ? (
           <option>Loading...</option>
+        ) : states.length === 0 ? (
+          <option>No states available</option> // Handle API error
         ) : (
           states.map((state: string) => (
             <option key={state} value={state}>
@@ -102,6 +121,8 @@ export default function LocationSelector() {
         </option>
         {loadingCities ? (
           <option>Loading...</option>
+        ) : cities.length === 0 ? (
+          <option>No cities available</option> // Handle API error
         ) : (
           cities.map((city: string) => (
             <option key={city} value={city}>
